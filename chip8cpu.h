@@ -45,7 +45,10 @@ unsigned char sound_timer;
 unsigned short stack[16];
 unsigned short sp;
 
-// the 
+// The chip 8 has a hex based keypad that points to (0x0-0xF).
+// We'll use an array to store the current state of the key.
+
+unsigned char key[16];
 
 
 
