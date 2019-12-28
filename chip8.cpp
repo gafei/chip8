@@ -28,10 +28,22 @@ void chip8::init()
 
 void chip8::loadROM()
 {
-
-
-
 	// load the program rom
+	
+	int bufferSize;
+
+	FILE *fp;
+	fp = fopen("someRom.rom", "rb");
+
+	// start fillingthe memory at location 0x200 == 512
+	for(i = 0; i < bufferSize; ++i){
+		memory[i + 512] = buffer[i];
+	}
+
+
+
+
+	
 
 }
 
@@ -44,10 +56,77 @@ void chip8::emulateCycle()
 {
 
 	// Fetch Opcode
+	opcdoe = memory[pc] << 8 | memory [pc +1];
+
 	// Decode Opcode
+	switch (opcode & 0xF000)
+	{
+		case 0xA000: // ANNN: Sets I to the address NNN
+		// Execute opcode
+		I = opcode & 0x0FFF;
+		pc+=2;
+		break;
+
+		// insert more opcodes here
+
+		case 0x0000: // 0x00E0: Clears the screen
+		break;
+
+		case 0x000E: // 0x00EE: Returns from a subroutine
+		break;
+
+		case 0xD000:
+		{
+
+			// Fetch the position and height of the sprite
+			unsigned short x = V[(opcode & 0x0F00) >> 8 ];
+			unsigned short y = V[(opcode & 0x00F0) >> 4 ];
+			unsigned short height = opcode & 0x000F; // Pixel value
+			unsigned short pixel;
+
+			V[0xF] = 0; // Reset register VF	
+			for (int yline = 0; yline < height; yline ++) // Loop over each row
+			{
+				pixel = memory[I + yline]; // Fetch the pixel value from the memory starting at location I 
+				for (int xline = 0; xline < 8; xline++) // Loop over 8 bits of one row
+				{
+					if((pixel & (0x80 >> xline )) !=0 ) // Check if the current evaulated pixel is set to 1
+					{ // 0x80 >> xline scans through the byte, one bit a a time 
+						if (gfx[(x + xline + ((yline) * 64))]  == 1) // check if the pixel on the display is set to 1. 
+							V[0xF] = 1; // if the value is 1, we need to register the collision by setting the VF register
+						gfx[x + xline + ((y + yline) * 64)] ^= 1; // set the pixel value by using XOR		
+					}
+			}
+		}
+
+		drawFlag = true; // we changed our gfx[] array and need to update the screen
+		pc +=2; // update the program counter to move to the next opcode
+
+		
+	}
+	break;
+
+		default:
+		printf("Unknown opcode:0x%X\n", opcode);
+
+
 	// Execute Opcode
 
 	// Update timers
+
+	if (delay_timer > 0)
+		--delay_timer;
+ 
+	if(sound_timer > 0)
+	{
+		if(sound_timer == 1)
+			printf("BEEP!\n");
+			--sound_timer;
+	}
+
+
+
+
 }
 
 void chip8::fetch()
