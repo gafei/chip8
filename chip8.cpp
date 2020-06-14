@@ -6,7 +6,7 @@ void chip8::init()
 	pc = 0x200; //program counter starts at 0x200
 	opcode = 0; //reset current opcode
 	I = 0; // reset index register
-	sp = 0; //reset stack pointer
+	sp = 0; //resets stack pointer
 
 	//clear the display
 	//clear the stack
@@ -15,7 +15,7 @@ void chip8::init()
 
 	// Load fontset
 
-	fot (int i = 0; i <80 ; ++i)
+	for (int i = 0; i <80 ; ++i)
 	{
 		memory[i] = chip8_fontset[i];
 	}
@@ -31,12 +31,13 @@ void chip8::loadROM()
 	// load the program rom
 	
 	int bufferSize;
+	
 
 	FILE *fp;
 	fp = fopen("someRom.rom", "rb");
 
 	// start fillingthe memory at location 0x200 == 512
-	for(i = 0; i < bufferSize; ++i){
+	for(int i = 0; i < bufferSize; ++i){
 		memory[i + 512] = buffer[i];
 	}
 
@@ -56,7 +57,11 @@ void chip8::emulateCycle()
 {
 
 	// Fetch Opcode
-	opcdoe = memory[pc] << 8 | memory [pc +1];
+	// This is determined from the program counter
+	// One OPCODE is 2 bytes long
+	// Need to fetch two bytes and merge them to get a opcode
+	// This merges both bytes and stores them in an unsigned short
+	opcode = memory[pc] << 8 | memory [pc +1]; // shift pc left by 8, then OR with [pc + 1]
 
 	// Decode Opcode
 	switch (opcode & 0xF000)
@@ -105,6 +110,25 @@ void chip8::emulateCycle()
 		
 	}
 	break;
+
+	case 0xE000:
+		switch(opcode & 0x00FF)
+		{
+			//EX9E : Skips the next instruction
+			// if the key stored in VX is pressed
+
+			case 0x009E:
+				if (key[V[(opcode & 0x0F00) >> 8]] !=0)
+					pc+=4;
+				else
+					pc+=2;
+				break;
+
+
+		}
+
+
+
 
 		default:
 		printf("Unknown opcode:0x%X\n", opcode);

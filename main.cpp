@@ -1,5 +1,5 @@
 #include <iostream>
-#include "chip8cpu.h"
+#include "chip8.h"
 #include <GLUT/glut.h> // use OpenGL for now. Possibly use Metal in the future?
 
 
@@ -28,7 +28,8 @@ int main(int argc, char **argv)
 		//If the draw flag is set, update the screen
 		if(myChip8.drawFlag)
 		{
-			drawGraphics();
+			//drawGraphics();
+			
 		}
 
 		// Store keypress state, during press and release
