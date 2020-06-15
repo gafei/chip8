@@ -39,12 +39,7 @@ void chip8::loadROM()
 	// start fillingthe memory at location 0x200 == 512
 	for(int i = 0; i < bufferSize; ++i){
 		memory[i + 512] = buffer[i];
-	}
-
-
-
-
-	
+	}	
 
 }
 
@@ -66,18 +61,41 @@ void chip8::emulateCycle()
 	// Decode Opcode
 	switch (opcode & 0xF000)
 	{
-		case 0xA000: // ANNN: Sets I to the address NNN
+		switch(opcode & 0x000F)
+		{
+			case 0x00E0: // 0x00E0: Clears the screen, CLS	
+			// Clear the screen
+
+			break;
+
+			case 0x00EE: // 0x00EE: Returns from a subroutine, RET
+				pc = stack[sp]; // sets the pc to the address at top of stack;
+				--sp; //subtracts 1 from stack pointer.
+			break;
+
+			default:
+				std::cout << "Unknown opcode [0x0000]: 0x" << opcode << "\n";
+
+		}
+
+		case 0xA000: // ANNN: Sets I to the address NNN, SYS addr
 		// Execute opcode
-		I = opcode & 0x0FFF;
-		pc+=2;
+			I = opcode & 0x0FFF;
+			pc+=2;
 		break;
 
 		// insert more opcodes here
 
-		case 0x0000: // 0x00E0: Clears the screen
+
+
+		case 0x1000: // Jump to location nnn. JP addr
+			pc = opcode & 0x0FFF; 
 		break;
 
-		case 0x000E: // 0x00EE: Returns from a subroutine
+		case 0x2000: // Call subroutine at nnn. 
+			stack[sp] = pc; // puts the program counter at the top of the stack  
+			++sp; //increment the stack pointer
+			pc = opcode & 0x0FFF; // set PC to nnn.
 		break;
 
 		case 0xD000:
@@ -110,6 +128,16 @@ void chip8::emulateCycle()
 		
 	}
 	break;
+
+
+	case 0x8004: // ADD Vx and Vy, If result is greater than 8 bits, VF is set to 1
+		if(V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 8]))
+    		V[0xF] = 1; //carry
+  		else
+			V[0xF] = 0;
+			V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
+			pc += 2;          
+		break;
 
 	case 0xE000:
 		switch(opcode & 0x00FF)
@@ -166,7 +194,7 @@ void chip8::fetch()
 	// Assumes the below:
 
 	memory[pc] == 0xA2;
-	memory[pc + 1] == 0xF0
+	memory[pc + 1] == 0xF0;
 
 
 }
@@ -180,5 +208,3 @@ void chip::execute()
 {
 
 }
-
-

@@ -57,7 +57,7 @@ public:
 
 
     void init();
-    void loadROM();
+    void loadGame();
     void emulateCycle();
     void fetch();
     void decode();
