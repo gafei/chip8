@@ -9,11 +9,15 @@ void chip8::init()
 	sp = 0; //resets stack pointer
 
 	//clear the display
+
+
+
 	//clear the stack
 	//clear registers V0-VF
 	//Clear memory
 
 	// Load fontset
+	// Font set starts at 0x50 (aka 80)
 
 	for (int i = 0; i <80 ; ++i)
 	{

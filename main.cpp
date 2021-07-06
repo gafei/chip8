@@ -1,7 +1,7 @@
 #include <iostream>
 #include "chip8.h"
-#include <GLUT/glut.h> // use OpenGL for now. Possibly use Metal in the future?
-
+//#include <GLUT/glut.h> // use OpenGL for now. Possibly use Metal in the future?
+//#include <sdl2> //use SDL for graphics/input
 
 chip8 myChip8;
 
