@@ -90,7 +90,7 @@ public:
     };
 
     void init();
-    void loadGame();
+    void loadRom();
     void emulateCycle();
     void fetch();
     void decode();

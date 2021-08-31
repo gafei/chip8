@@ -19,10 +19,11 @@ void chip8::init()
 	// Load fontset
 	// Font set starts at 0x50 (aka 80)
 
-	for (int i = 0; i <80 ; ++i)
-	{
-		memory[i] = chip8_fontset[i];
-	}
+	//for (int i = 0; i <80 ; ++i)
+	//{
+//		memory[i] = exit
+//		chip8_fontset[i];
+//	}
 
 	//reset memory timers
 
@@ -30,20 +31,45 @@ void chip8::init()
 
 }
 
-void chip8::loadROM()
+void chip8::loadRom()
 {
 	// load the program rom
 	
-	int bufferSize;
-	
+	int bufferSize = 4096;
+	int buffer[bufferSize];
+	    //const char *filePath = "C:\\Users\\UrName\\Desktop\\testFile.bin";  
 
 	FILE *fp;
-	fp = fopen("someRom.rom", "rb");
+	fp = fopen("chip8-master/roms/pong.rom", "rb");
+	if (fp ==NULL)
+	{
+		std::cout <<"Couldn't open ROM.\n";
+	}
+	else{
+		std::cout <<"ROM Opened successfully.\n";
+	}
 
-	// start fillingthe memory at location 0x200 == 512
-	for(int i = 0; i < bufferSize; ++i){
-		memory[i + 512] = buffer[i];
-	}	
+// An unsigned char can store 1 Bytes (8bits) of data (0-255)
+	typedef unsigned char BYTE;
+
+	BYTE *fileBuf;          // Pointer to our buffered data
+	fileBuf = new BYTE[4096];
+
+		// Read the file in to the buffer
+	    fread(fileBuf, 4096, 1, fp);
+
+	for (int i = 0; i <4096; i++){
+		printf("%02x ", fileBuf[i]);
+	}
+
+
+	//fread(fp, )
+
+
+	// start filling the memory at location 0x200 == 512
+	//for(int i = 0; i < bufferSize; ++i){
+//		memory[i + 512] = buffer[i];
+//	}	
 
 }
 
@@ -126,7 +152,7 @@ void chip8::emulateCycle()
 			}
 		}
 
-		drawFlag = true; // we changed our gfx[] array and need to update the screen
+		//drawFlag = true; // we changed our gfx[] array and need to update the screen
 		pc +=2; // update the program counter to move to the next opcode
 
 		
@@ -170,8 +196,9 @@ void chip8::emulateCycle()
 
 	// Update timers
 
-	if (delay_timer > 0)
+	if (delay_timer > 0){
 		--delay_timer;
+	}
  
 	if(sound_timer > 0)
 	{
@@ -179,36 +206,5 @@ void chip8::emulateCycle()
 			printf("BEEP!\n");
 			--sound_timer;
 	}
-
-
-
-
 }
-
-void chip8::fetch()
-{
-
-	// in a fetch, the system will fetch one opcode 
-	// from memory at the location specified by the program counter
-	// In our chip8 emulator, data is stored in an array
-	// where each address contains a byte. 
-	// As one opcode is 2 bytes long, we will need to fetch two
-	// successive bytes and merge them to get the actual opcode
-
-	// Assumes the below:
-
-	memory[pc] == 0xA2;
-	memory[pc + 1] == 0xF0;
-
-
-}
-
-void chip8::decode()
-{
-
-}
-
-void chip::execute()
-{
-
 }

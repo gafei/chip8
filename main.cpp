@@ -14,11 +14,11 @@ int main(int argc, char **argv)
 
 	//Init the chip8 system and load the game into memory
 
-	myChip8.init();
-	myChip8.loadGame("pong");
+	//myChip8.init();
+	myChip8.loadRom();
 
 	// The actual emulation loop
-
+/********
 	for(;;)
 	{
 
@@ -37,6 +37,7 @@ int main(int argc, char **argv)
 
 
 	}
+	*******/
 
 	return 0;
 }
